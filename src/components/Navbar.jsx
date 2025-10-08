@@ -26,6 +26,13 @@ export default function Navbar() {
                             Saved Question
                         </Link>
                     </li>
+                    <li>
+                        <Link
+                            to="/practice"
+                            className="text-white hover:text-blue-400 transition-colors">
+                            Practice Page
+                        </Link>
+                    </li>
                 </ul>
             </nav>
         </div>

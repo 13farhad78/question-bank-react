@@ -127,7 +127,7 @@ export default function MultipleChoiceForm() {
       <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <InoutWithIcons
           label="Question stem"
-          placeholder="Enter your question stem here"
+          placeholder
           value={formData.questionStem}
           onChange={(e) => handleChange("questionStem", e.target.value)}
           error={errors.questionStem}
