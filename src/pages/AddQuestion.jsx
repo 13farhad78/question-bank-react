@@ -1,6 +1,5 @@
 import { useState } from "react";
 import MultipleChoiceForm from "../components/MultipleChoiceForm";
-import TrueFalseForm from "../components/True/FalseForm";
 
 export default function AddQuestion() {
   const [activeTab, setActiveTab] = useState("Multiple Choice");
@@ -38,7 +37,7 @@ export default function AddQuestion() {
 
         <div className="text-white">
           {activeTab === "Multiple Choice" && <div><MultipleChoiceForm /></div>}
-          {activeTab === "True/False" && <div><TrueFalseForm/></div>}
+          {activeTab === "True/False" && <div></div>}
           {activeTab === "Reading" && <div>Reading content goes here</div>}
         </div>
       </div>
