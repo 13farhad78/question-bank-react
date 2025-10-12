@@ -1,9 +1,9 @@
-import InoutWithIcons from "./InputWithIcons";
+import InoutWithIcons from "../form_parts/InputWithIcons";
 import CheckIcon from "../assets/CheckIcon";
 import TrashIcon from "../assets/TrashIcon";
 import { useState } from "react";
-import BasicQuestionInfo from "./BasicQuestionInfo";
-import Button from "./Button";
+import BasicQuestionInfo from "../form_parts/BasicQuestionInfo";
+import Button from "../components/Button";
 
 export default function MultipleChoiceForm() {
   const MIN_OPTIONS = 2;

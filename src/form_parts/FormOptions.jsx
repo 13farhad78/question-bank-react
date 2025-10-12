@@ -1,5 +1,5 @@
 // FormOptions.jsx
-import InputWithIcons from "../components/InputWithIcons";
+import InputWithIcons from "../form_parts/InputWithIcons";
 import CheckIcon from "../assets/CheckIcon";
 import TrashIcon from "../assets/TrashIcon";
 import Button from "../components/Button";
@@ -31,7 +31,7 @@ export default function FormOptions({ optionsData, updateOption, toggleOptionCor
         ))}
       </div>
 
-      <Button className="mr-2" onClick={addOption}>
+      <Button className="mr-2" onClick={addOption} type={"button"}>
         Add Option
       </Button>
     </>

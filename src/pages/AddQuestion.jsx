@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MultipleChoiceForm from "../components/MultipleChoiceForm";
+import MultipleChoiceForm from "../forms/MultipleChoiceForm";
 
 export default function AddQuestion() {
   const [activeTab, setActiveTab] = useState("Multiple Choice");

@@ -28,7 +28,6 @@ export default function useOptionsData(initialCount = 4) {
       const nextKey = Object.keys(prev).length + 1;
       return { ...prev, [nextKey]: { text: "", isCorrect: false } };
     });
-    console.log("click");
   };
 
   // تابع تعیین گزینه ی صحیح
