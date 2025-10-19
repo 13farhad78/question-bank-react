@@ -1,20 +1,20 @@
 // src/Routes/AppRoutes.jsx
 import { Routes, Route } from "react-router-dom";
-import HomePage from "../pages/HomePage";
-import AddQuestion from "../pages/AddQuestion";
-import SavedQuestion from "../pages/SavedQuestion";
-import PracticePage from "../pages/practicePage";
 import Layout from "../Layout";
+import Dashboard from "../pages/Dashboard";
+import AddQuestionPage from "../pages/AddQuestionPage";
+import SavedQuestionsPage from "../pages/SavedQuestionsPage";
+import SettingsPage from "../pages/SettingsPage";
 
 export default function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<HomePage />} />
-        <Route path="add" element={<AddQuestion />} />
-        <Route path="saved" element={<SavedQuestion />} />
-        <Route path="practice" element={<PracticePage />} />
-      </Route>
-    </Routes>
+  <Routes>
+    <Route path="/" element={<Layout />}>
+      <Route index element={<Dashboard/>} />
+      <Route path="add-question" element={<AddQuestionPage />} />
+      <Route path="saved-questions" element={<SavedQuestionsPage />} />
+      <Route path="settings" element={<SettingsPage />} />
+    </Route>
+  </Routes>
   );
 }

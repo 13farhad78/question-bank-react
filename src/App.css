@@ -8,31 +8,13 @@
 @layer base {
   body {
     @apply bg-gray-800 text-white font-vazir;
-    direction: rtl;
+  }
+  input {
+    @apply !font-vazir
   }
 }
 
 @utility container {
     margin-right: auto;
     margin-left: auto;
-}
-
-@utility card {
-  @apply bg-gray-700 p-4 rounded-lg shadow-md pb-10;
-}
-
-@utility selected-tab {
-  @apply bg-blue-600 text-white;
-}
-
-@utility correct {
-  @apply bg-green-700 text-white;
-}
-
-@utility option-number {
-  @apply whitespace-nowrap border rounded-full size-10 flex items-center justify-center cursor-pointer;
-}
-
-@utility option-number-selected {
-  @apply bg-blue-600 text-white border-blue-600;
 }

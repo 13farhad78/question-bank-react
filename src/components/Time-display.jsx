@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 export default function TimeDisplay() {
   const [time, setTime] = useState(new Date());
@@ -21,8 +22,11 @@ const [hour, minute, second] = timeString.split(":");
 
 
   return (
-    <p dir="ltr">
-      {`${hour} : ${minute} : ${second}`}
-    </p>
+    <div className="flex items-center gap-x-1">
+      <p dir="ltr" className="font-sahel w-19">
+        {`${hour} : ${minute} : ${second}`} 
+      </p>
+      <AccessTimeIcon fontSize="small"/>
+    </div>
   );
 }
