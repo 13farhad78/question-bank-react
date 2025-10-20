@@ -1,8 +1,11 @@
 // CustomeInputField.jsx
 import { TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
-export default function CustomeInputField({ label, name, control,rules, ...props }) {
+export default function CustomeInputField({ label, name, rules, ...props }) {
+  const { control } = useFormContext();
+
   return (
     <div>
         <Controller

@@ -1,127 +1,39 @@
-import { useForm } from "react-hook-form";
-import { Button, IconButton, InputAdornment, Grid2 } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import FormTamplate from "../form_parts/FormTamplate";
 import CustomeInputField from "../form_parts/CustomeInputField";
-import { useOptions } from "../hooks/useOptions";
+import OptionsContainer from "../form_parts/OptionsContainer";
+import QuestionBasicInfo from "../form_parts/QuestionBasicInfo";
+
+const submitForm = (data) => console.log(data);
 
 export default function MultipleQuestionForm() {
-    const methods = useForm({
-        defaultValues: {
-            stem: "",
-            text: "",
-            options: [
-                { text: "", isCorrect: true },
-                { text: "", isCorrect: false },
-                { text: "", isCorrect: false },
-                { text: "", isCorrect: false },
-            ],
-        },
-    });
-
-    const { control, handleSubmit, getValues, setValue } = methods;
-
-    const { fields, addOption, removeOption, toggleCorrect } = useOptions({
-        control,
-        getValues,
-        setValue,
-    });
-
-    const onSubmit = (data) => console.log("Form data:", data);
-
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Question Stem & Text */}
+        <FormTamplate
+            defaultValues={{
+                question_stem: "",
+                question_text: "",
+                options: [],
+            }}
+            onSubmit={submitForm}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <CustomeInputField
-                    name="stem"
-                    label="Question Stem"
-                    control={control}
-                    rules={{ required: "Question Stem is required" }}
+                    label={"questions text"}
+                    name={"question_text"}
+                    rules={{ required: true }}
                 />
                 <CustomeInputField
-                    name="text"
-                    label="Question Text"
-                    control={control}
-                    rules={{ required: "Question Text is required" }}
+                    label={"questions stem"}
+                    name={"question_stem"}
+                    rules={{ required: true }}
                 />
             </div>
 
-            {/* Options Section */}
-            <Grid2 container spacing={2} mt={2}>
-                {fields.map((field, index) => (
-                    <Grid2 key={field.id} size={{ xs: 12, sm: 6 }}>
-                        <CustomeInputField
-                            name={`options.${index}.text`}
-                            label={`Option ${index + 1}`}
-                            control={control}
-                            InputLabelProps={{
-                                sx: {
-                                    color: field.isCorrect
-                                        ? "green"
-                                        : "inherit",
-                                },
-                            }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    "& fieldset": {
-                                        borderColor: field.isCorrect
-                                            ? "green"
-                                            : undefined,
-                                    },
-                                    "&:hover fieldset": {
-                                        borderColor: field.isCorrect
-                                            ? "green"
-                                            : undefined,
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: field.isCorrect
-                                            ? "green"
-                                            : undefined,
-                                    },
-                                },
-                            }}
-                            rules={{ required: "Option text is required" }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <IconButton
-                                            onClick={() => toggleCorrect(index)}
-                                            color={
-                                                field.isCorrect
-                                                    ? "success"
-                                                    : "default"
-                                            }>
-                                            <CheckIcon />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => removeOption(index)}
-                                            color="error">
-                                            <HighlightOffIcon />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                    </Grid2>
-                ))}
-            </Grid2>
+            <OptionsContainer
+                initialCount={4}
+                className={"grid grid-cols-1 lg:grid-cols-4 gap-4 mt-5"}
+            />
+            <div className="bg-gray-300/20 h-0.5 w-full my-3 rounded-full"></div>
 
-            <Button
-                type="button"
-                onClick={addOption}
-                variant="outlined"
-                sx={{ mt: 2 }}>
-                ➕ Add Option
-            </Button>
-
-            <Button type="submit" variant="contained" sx={{ mt: 4 }}>
-                Submit Question
-            </Button>
-        </form>
+            <QuestionBasicInfo/>
+        </FormTamplate>
     );
 }
