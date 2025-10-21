@@ -18,6 +18,7 @@ export default function OptionField({ name, label, onRemove, onToggleCorrect, is
           error={!!fieldState.error}
           helperText={fieldState.error?.message || ""}
           fullWidth
+          autoComplete="off"
           sx={{
             "& .MuiOutlinedInput-root": {
               "& fieldset": {
