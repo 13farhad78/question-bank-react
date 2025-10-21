@@ -3,7 +3,9 @@ import CustomeInputField from "../form_parts/CustomeInputField";
 import OptionsContainer from "../form_parts/OptionsContainer";
 import QuestionBasicInfo from "../form_parts/QuestionBasicInfo";
 
-const submitForm = (data) => console.log(data);
+const submitForm = (data) => {
+    console.log(data)
+};
 
 export default function MultipleQuestionForm() {
     return (
@@ -33,7 +35,7 @@ export default function MultipleQuestionForm() {
             />
             <div className="bg-gray-300/20 h-0.5 w-full my-3 rounded-full"></div>
 
-            <QuestionBasicInfo/>
+            <QuestionBasicInfo />
         </FormTamplate>
     );
 }

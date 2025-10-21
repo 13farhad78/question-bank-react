@@ -21,13 +21,12 @@ export default function CustomAutoComplete({ name, options = [] }) {
 						isOptionEqualToValue={(option, value) =>
 							option?.value === value?.value
 						}
-						onChange={(event, value) => field.onChange(value)} // اتصال RHF
+						onChange={(event, value) => field.onChange(value )} // اتصال RHF
 						renderInput={(params) => (
 							<TextField
 								{...params}
 								label={name}
 								error={!!fieldState.error}
-								className=" !font-vazir"
 							/>
 						)}
 						slotProps={{
