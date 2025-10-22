@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import {cleanData} from "../utils/CleanData"
 
 // Helper function to extract the actual value from AutoComplete objects.
 const extractValue = (field) => {
@@ -27,6 +28,7 @@ const cleanFormData = (data) => {
     if (cleanedData.questionSource) {
         cleanedData.questionSource.year = extractValue(cleanedData.questionSource.year);
         cleanedData.questionSource.month = extractValue(cleanedData.questionSource.month);
+        cleanedData.questionSource.province = extractValue(cleanedData.questionSource.province);
     }
     
     // Note: The 'options' array items are assumed to be clean due to the RHF Controller logic.
@@ -35,14 +37,18 @@ const cleanFormData = (data) => {
 };
 
 
-export default function FormTamplate({ defaultValues, onSubmit, children }) {
+export default function FormTamplate({ defaultValues = {}, onSubmit, children }) {
     const methods = useForm({ defaultValues });
 
     // Function to handle the submit event, clean data, and pass it to the final handler.
     const handleFormSubmit = (data) => {
         const finalData = cleanFormData(data);
+        // remove properties with null or undefined values from nested objects
+        const cleanedFinalData = cleanData(finalData);
         // Call the user's provided onSubmit function with the cleaned data.
-        onSubmit(finalData);
+        onSubmit(cleanedFinalData);
+        // reset the form after submission
+        methods.reset();
     };
 
     return (

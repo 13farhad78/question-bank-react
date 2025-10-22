@@ -104,3 +104,12 @@ export const iranProvinces = [
   { value: "Zanjan", label: "Zanjan" },
   { value: "Khuzestan", label: "Khuzestan" },
 ];
+
+// question types data
+export const questionTypes = [
+  { value: "multiple_choice", label: "Multiple Choice" },
+  { value: "fill_in_the_blank", label: "Fill in the Blank" },
+  { value: "true_false", label: "True/False" },
+  { value: "matching", label: "Matching" },
+  { value: "short_answer", label: "Short Answer" },
+];

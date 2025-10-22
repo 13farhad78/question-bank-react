@@ -1,13 +1,37 @@
-import { Container } from "@mui/material";
+import { Autocomplete, Container, TextField } from "@mui/material";
 import MultipleQuestionForm from "../forms/MultipleQuestionForm";
+import FillInTheBlankForm from "../forms/FillInTheBlankForm";
+import { questionTypes } from "../data/Data";
+import { useState } from "react";
 
 export default function AddQuestionPage() {
-	return (
-		<Container>
-			<div className="flex flex-col gap-5">
-				add questions
-				<MultipleQuestionForm />
-			</div>
-		</Container>
-	);
+    const [selectedType, setSelectedType] = useState(null);
+
+    return (
+        <Container>
+            <Autocomplete
+                options={questionTypes}
+                onChange={(event, newValue) => {
+                    setSelectedType(newValue ? newValue.value : null);
+                }}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="question Type"
+                        sx={{ mb: 4 }}
+                    />
+                )}
+            />
+
+            {/* {conditional rendering} */}
+            {selectedType === "multiple_choice" && <MultipleQuestionForm />}
+            {selectedType === "fill_in_the_blank" && <FillInTheBlankForm />}
+
+            {selectedType === null && (
+                <div className=" text-lg">
+                    Please select a question type to proceed.
+                </div>
+            )}
+        </Container>
+    );
 }

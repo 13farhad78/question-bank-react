@@ -3,7 +3,7 @@ import { TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
 
-export default function CustomeInputField({ label, name, rules, ...props }) {
+export default function CustomeInputField({ label, name,dir, rules, ...props }) {
   const { control } = useFormContext();
 
   return (
@@ -16,7 +16,9 @@ export default function CustomeInputField({ label, name, rules, ...props }) {
             <TextField
             {...field}
             {...props}
+            dir={dir}
             label={label}
+            value={field.value??""}
             error={!!fieldState.error}
             helperText={fieldState.error?.message || ""}
             fullWidth

@@ -27,6 +27,7 @@ export default function QuestionBasicInfo() {
     useEffect(() => {
         if (previousGrade.current !== gradeKey) {
             setValue("lesson", null);
+
             previousGrade.current = gradeKey;
         }
     }, [gradeKey, setValue]);
@@ -49,7 +50,8 @@ export default function QuestionBasicInfo() {
     const finalFields = isFinal ? finalFieldMap[gradeKey] || [] : [];
 
     return (
-        <div className="mt-4">
+        <div className="">
+            <div className="bg-gray-500/20 h-0.5 w-full rounded-full mb-5"></div>
             <div className="grid grid-cols-4 gap-2 mx-auto">
                 <CustomAutoComplete name="grade" options={grades} />
                 <CustomAutoComplete

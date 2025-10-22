@@ -4,7 +4,12 @@ import OptionsContainer from "../form_parts/OptionsContainer";
 import QuestionBasicInfo from "../form_parts/QuestionBasicInfo";
 
 const submitForm = (data) => {
-    console.log(data)
+    // add question type to data
+    const questionType = "multiple_choice";
+    data.question_type = questionType;
+
+    ////////////////////////////// remove unnecessary properties !!!!!!  //////////////////////////////
+    console.log(data);
 };
 
 export default function MultipleQuestionForm() {
@@ -39,3 +44,4 @@ export default function MultipleQuestionForm() {
         </FormTamplate>
     );
 }
+
