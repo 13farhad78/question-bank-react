@@ -8,7 +8,7 @@ export default function useOptions(fieldName = "options", initialCount = 2) {
     // 💡 از useFieldArray فقط fields و append/remove را بگیرید
     const { fields, append, remove } = useFieldArray({
         control,
-        name: fieldName,
+        name: `question_data.${fieldName}`,
     });
 
     // 💡 ایجاد آرایه مقادیر پیش‌فرض مورد نیاز
@@ -28,21 +28,21 @@ export default function useOptions(fieldName = "options", initialCount = 2) {
             
             // 💡 راه حل: استفاده از setValue برای جایگزینی کل آرایه
             // این کار از باگ‌های داخلی useFieldArray در مقداردهی اولیه جلوگیری می‌کند
-            setValue(fieldName, initialOptions, { shouldValidate: true });
+            setValue(`question_data.${fieldName}`, initialOptions, { shouldValidate: true });
         }
     
     // در وابستگی‌ها، فقط چیزهایی که برای اولین بار لازمند را می‌گذاریم
     // fields.length برای چک کردن وضعیت اولیه
-    // setValue و fieldName برای اجرای منطق
+    // setValue و `question_data.${fieldName}` برای اجرای منطق
     // initialOptions برای دسترسی به مقادیر
-    }, [fields.length, setValue, fieldName, initialOptions]); 
+    }, [fields.length, setValue, `question_data.${fieldName}`, initialOptions]); 
 
     const toggleCorrect = (index) => {
-        const values = getValues(fieldName);
+        const values = getValues(`question_data.${fieldName}`);
         values.forEach((item, i) => {
           item.isCorrect = i === index ? !item.isCorrect : false;
         });
-        setValue(fieldName, values);
+        setValue(`question_data.${fieldName}`, values);
     };
 
     return { fields, append, remove, toggleCorrect };

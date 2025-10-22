@@ -1,6 +1,8 @@
-import CustomeInputField from "../form_parts/CustomeInputField";
+import AnswerSlotsManager from "../form_parts/AnswerSlotsManager";
 import FormTamplate from "../form_parts/FormTamplate";
 import QuestionBasicInfo from "../form_parts/QuestionBasicInfo";
+import QuestionStemField from "../form_parts/QuestionStemField";
+import QuestionTextField from "../form_parts/QuestionTextField";
 
 export default function FillInTheBlankForm() {
     const submitForm = (data) => {
@@ -13,18 +15,10 @@ export default function FillInTheBlankForm() {
     return (
         <FormTamplate onSubmit={submitForm}>
             <div className="space-y-4">
-                <CustomeInputField
-                    label={"questions stem"}
-                    name={"question_stem"}
-                    dir={"rtl"}
-                    rules={{ required: true }}
-                />
-                <CustomeInputField
-                    label={"questions text"}
-                    name={"question_text"}
-                    rules={{ required: true }}
-                />
+                <QuestionStemField/>
+                <QuestionTextField/>
             </div>
+            <AnswerSlotsManager/>
             <QuestionBasicInfo />
         </FormTamplate>
     );

@@ -1,41 +1,53 @@
-import { Controller, useFormContext } from "react-hook-form";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
+// CustomAutoComplete.jsx
 
-export default function CustomAutoComplete({ name, options = [] }) {
-	const { control } = useFormContext();
+import { Autocomplete, Box, TextField } from "@mui/material";
+import { Controller } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
-	return (
-		<Box sx={{ width: "100%" }}>
-			<Controller
-				name={name}
-				control={control}
-				defaultValue={null} // مقدار اولیه خالی
-				rules={{ required: true }}
-				render={({ field, fieldState }) => (
-					<Autocomplete
-						{...field}
-						options={options}
-						getOptionLabel={(option) => option?.label || ""}
-						isOptionEqualToValue={(option, value) =>
-							option?.value === value?.value
-						}
-						onChange={(event, value) => field.onChange(value )} // اتصال RHF
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								label={name}
-								error={!!fieldState.error}
-							/>
-						)}
-						slotProps={{
-							paper: { style: { fontFamily: "Vazir" } },
-						}}
-						noOptionsText="No Option"
-					/>
-				)}
-			/>
-		</Box>
-	);
+// 💡 اضافه شدن پراپرتی 'label'
+export default function CustomAutoComplete({ name, options = [], label, ...props }) {
+    const { control } = useFormContext();
+
+    // تعیین لیبل نمایش داده شده
+    const displayLabel = label || name; 
+
+    return (
+        <Box sx={{ width: "100%" }}>
+            <Controller
+                name={name}
+                control={control}
+                defaultValue={null}
+                rules={{ required: true }}
+                render={({ field, fieldState }) => (
+                    <Autocomplete
+                        {...field}
+                        {...props}
+                        options={options}
+                        getOptionLabel={(option) => option?.label || ""}
+                        isOptionEqualToValue={(option, value) =>
+                            option?.value === value?.value
+                        }
+                        // اتصال RHF: Autocomplete نیاز به تنظیم value در field دارد
+                        // و در onChange مقدار جدید را به field.onChange پاس می‌دهد
+                        onChange={(event, value) => field.onChange(value )} 
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                // 💡 استفاده از 'displayLabel' به جای 'name'
+                                label={displayLabel} 
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message || ""}
+                                fullWidth
+                                autoComplete="off"
+                            />
+                        )}
+                        slotProps={{
+                            paper: { style: { fontFamily: "Vazir" } },
+                        }}
+                        noOptionsText="No Option"
+                    />
+                )}
+            />
+        </Box>
+    );
 }

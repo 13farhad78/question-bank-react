@@ -24,7 +24,7 @@ export default function OptionsContainer({
         {fields.map((field, index) => (
           <OptionField
             key={field.id}
-            name={`${fieldName}.${index}.text`}
+            name={`question_data.${fieldName}.${index}.text`}
             label={`Option ${index + 1}`}
             isCorrect={field.isCorrect}
             onRemove={() => {
