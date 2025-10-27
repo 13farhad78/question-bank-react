@@ -1,6 +1,7 @@
 import { Autocomplete, Container, TextField } from "@mui/material";
 import MultipleQuestionForm from "../forms/MultipleQuestionForm";
 import FillInTheBlankForm from "../forms/FillInTheBlankForm";
+import ReadingForm from "../forms/ReadingForm";
 import { questionTypes } from "../data/Data";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ export default function AddQuestionPage() {
             {/* {conditional rendering} */}
             {selectedType === "multiple_choice" && <MultipleQuestionForm />}
             {selectedType === "fill_in_the_blank" && <FillInTheBlankForm />}
+            {selectedType === "Reading" && <ReadingForm />}
 
             {selectedType === null && (
                 <div className=" text-lg">

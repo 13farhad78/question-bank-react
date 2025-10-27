@@ -112,4 +112,5 @@ export const questionTypes = [
   { value: "true_false", label: "True/False" },
   { value: "matching", label: "Matching" },
   { value: "short_answer", label: "Short Answer" },
+  { value: "Reading", label: "reading" },
 ];

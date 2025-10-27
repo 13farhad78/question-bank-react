@@ -3,38 +3,33 @@ import OptionsContainer from "../form_parts/OptionsContainer";
 import QuestionBasicInfo from "../form_parts/QuestionBasicInfo";
 import QuestionStemField from "../form_parts/QuestionStemField";
 import QuestionTextField from "../form_parts/QuestionTextField";
+import {validateMultipleChoiceCorrectOption} from "../utils/validation"
 
 const submitForm = (data) => {
-	// add question type to data
-	const questionType = "multiple_choice";
-	data.question_type = questionType;
+    // اضافه کردن نوع سوال به داده‌ها
+    const questionType = "multiple_choice";
+    data.question_type = questionType;
 
-	// make sure that one option is corrert
-	const validateCorrectOption = (options) => {
-		if (!options || options.length === 0) {
-			return false; // اگر آرایه کلاً خالی بود
-		}
-		// حداقل یک گزینه باید isCorrect: true داشته باشد
-		return options.some((option) => option.isCorrect === true);
-	};
+    if (data.question_type === "multiple_choice") {
+        // 👈 استفاده از تابع کمکی مستقل
+        const isOneOptionCorrect = validateMultipleChoiceCorrectOption(
+            data.question_data.options
+        );
 
-	if (data.question_type === "multiple_choice") {
-		const isOneOptionCorrect = validateCorrectOption(data.question_data.options);
+        if (!isOneOptionCorrect) {
+            // 🚨 نمایش پیغام خطا و توقف سابمیت
+            console.error(
+                "Submission blocked: At least one option must be marked as correct."
+            );
+            alert(
+                "لطفاً حداقل یکی از گزینه‌ها را به عنوان پاسخ صحیح انتخاب کنید."
+            );
+            return; // توقف تابع و جلوگیری از ارسال داده
+        }
+    }
 
-		if (!isOneOptionCorrect) {
-			// 🚨 نمایش پیغام خطا و توقف سابمیت
-			console.error(
-				"Submission blocked: At least one option must be marked as correct."
-			);
-			alert(
-				"لطفاً حداقل یکی از گزینه‌ها را به عنوان پاسخ صحیح انتخاب کنید."
-			);
-			return; // توقف تابع و جلوگیری از ارسال داده
-		}
-	}
-
-	////////////////////////////// remove unnecessary properties !!!!!!  //////////////////////////////
-	console.log(data);
+    ////////////////////////////// remove unnecessary properties !!!!!! //////////////////////////////
+    console.log(data);
 };
 
 export default function MultipleQuestionForm() {
