@@ -9,6 +9,8 @@ import { Box, Typography, Divider } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomRadioGroup from "../form_parts/CustomRadioGroup";
 import OptionsContainer from "../form_parts/OptionsContainer";
+import { useFormContext } from "react-hook-form";
+import {validateMultipleChoiceCorrectOption} from "../utils/validation"
 
 // 🎯 Multiple Choice Fields
 function MultipleChoiceFields({ questionIndex }) {
@@ -30,6 +32,8 @@ function MultipleChoiceFields({ questionIndex }) {
 
 // 🎯 Question Card
 function QuestionCard({ question, index, onRemove, children }) {
+    const { register } = useFormContext();
+    
     return (
         <div
             className="
@@ -39,6 +43,13 @@ function QuestionCard({ question, index, onRemove, children }) {
 				shadow-md 
 				p-5 
 			">
+            {/* Input مخفی برای ثبت type سوال */}
+            <input
+                type="hidden"
+                {...register(`question_data.questions[${index}].type`)}
+                value={question.type}
+            />
+            
             <div className="flex justify-between items-center mb-2">
                 <h3 className="text-lg font-semibold text-blue-300">
                     Question {index + 1} — {getQuestionTypeLabel(question.type)}
@@ -81,7 +92,38 @@ export default function ReadingForm() {
     const [questions, setQuestions] = useState([]);
 
     const handleSubmit = (data) => {
-        console.log("Form data submitted:", data);
+        const questionsData = data.question_data?.questions || [];
+        // 1. تکرار بر روی همه سوالات
+        for (let i = 0; i < questionsData.length; i++) {
+            const question = questionsData[i];
+
+            // 2. بررسی نوع سوال
+            if (question.type === "multi_choice") {
+                const options = question.options;
+
+                // 3. اعمال اعتبارسنجی چند گزینه‌ای
+                const isOneOptionCorrect = validateMultipleChoiceCorrectOption(options);
+
+                if (!isOneOptionCorrect) {
+                    // 🚨 نمایش خطا و توقف در صورت ناموفق بودن اعتبارسنجی
+                    console.error(
+                        `Validation blocked: Multiple Choice Question ${i + 1} has no correct option marked.`
+                    );
+                    alert(
+                        `سوال شماره ${i + 1}: لطفاً حداقل یکی از گزینه‌ها را به عنوان پاسخ صحیح انتخاب کنید.`
+                    );
+                    
+                    // 💡 نکته: اگر از کتابخانه‌ای مثل React Hook Form استفاده می‌کنید،
+                    // می‌توانید خطا را به فیلد خاص (مثلاً questions[${i}].options) بفرستید.
+                    
+                    return; // 👈 توقف تابع و جلوگیری از ارسال داده
+                }
+            }
+        }
+        
+        // اگر همه اعتبارسنجی‌ها با موفقیت انجام شد
+        console.log("✅ Form data is valid and submitted:", data);
+        // 🚀 اینجا باید منطق نهایی ارسال (API Call) را قرار دهید
     };
 
     const handleAddQuestion = (questionType) => {
@@ -99,7 +141,6 @@ export default function ReadingForm() {
             }),
             ...(questionType === "true_false" && { correct_answer: "" }),
             ...(questionType === "short_answer" && { short_answer: "" }),
-            ...(questionType === "full_answer" && { full_answer: "" }),
         };
         setQuestions((prev) => [...prev, newQuestion]);
     };
