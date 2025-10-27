@@ -1,105 +1,261 @@
 // ReadingForm.jsx
-
 import FormTamplate from "../form_parts/FormTamplate";
 import QuestionBasicInfo from "../form_parts/QuestionBasicInfo";
-
-// ⚠️ این کامپوننت فعلاً نیازی نیست و باید حذف شود
-// import MultipleChoiceFields from "../form_parts/question/multipleChoiceFields"; 
-
 import QuestionStemField from "../form_parts/QuestionStemField";
 import CustomeInputField from "../form_parts/CustomeInputField";
-
 import ReadingQuestionsMenu from "../form_parts/ReadingQuestionsMenu";
+import { useState } from "react";
+import { Box, Typography, Divider } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CustomRadioGroup from "../form_parts/CustomRadioGroup";
+import OptionsContainer from "../form_parts/OptionsContainer";
 
-import { useFormContext, useFieldArray } from 'react-hook-form';
-import { Button } from '@mui/material'; // برای دکمه حذف
+// 🎯 Multiple Choice Fields
+function MultipleChoiceFields({ questionIndex }) {
+    return (
+        <Box sx={{ mt: 2 }}>
+            <CustomeInputField
+                label={"question text"}
+                name={`question_data.questions[${questionIndex}].question_text`}
+            />
 
-// --------------------------------------------------------
-// ۱. تعریف ساختار داده اولیه (گام حیاتی)
-// --------------------------------------------------------
-const getInitialQuestion = (type) => {
-    // فعلاً فقط برای تست و لاگ گرفتن، یک شیء ساده برمی‌گرداند
-    switch(type) {
-        case 'multi_choice':
-            return { type: 'multi_choice', stem: 'سوال چند گزینه‌ای جدید' };
-        case 'true_false':
-            return { type: 'true_false', stem: 'سوال صحیح/غلط جدید' };
-        case 'short_answer':
-            return { type: 'short_answer', stem: 'سوال کوتاه پاسخ جدید' };
-        case 'full_answer':
-            return { type: 'full_answer', stem: 'سوال پاسخ کامل جدید' };
-        default:
-            return { type: 'unknown', stem: 'نوع نامشخص' };
-    }
-};
+            <OptionsContainer
+                fieldName={`questions[${questionIndex}].options`}
+                initialCount={4}
+                className={"grid grid-cols-1 lg:grid-cols-4 gap-4 mt-5"}
+            />
+        </Box>
+    );
+}
 
+// 🎯 Question Card
+function QuestionCard({ question, index, onRemove, children }) {
+    return (
+        <div
+            className="
+				rounded-2xl 
+				bg-gray-800/70 
+				border border-gray-700 
+				shadow-md 
+				p-5 
+			">
+            <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold text-blue-300">
+                    Question {index + 1} — {getQuestionTypeLabel(question.type)}
+                </h3>
+
+                <button
+                    onClick={() => onRemove(index)}
+                    className="
+						text-red-400 
+						p-1 
+						rounded-md 
+						hover:bg-red-500/10 
+						transition 
+						duration-200
+					">
+                    <DeleteIcon fontSize="small" />
+                </button>
+            </div>
+
+            <hr className="border-gray-700 mb-4" />
+
+            <div className="space-y-4">{children}</div>
+        </div>
+    );
+}
+
+// 🎯 Helper
+function getQuestionTypeLabel(type) {
+    const labels = {
+        multi_choice: "Multiple Choice",
+        true_false: "True/False",
+        short_answer: "Short Answer",
+        full_answer: "Full Answer",
+    };
+    return labels[type] || type;
+}
+
+// 🎯 Main Component
 export default function ReadingForm() {
-    const { control } = useFormContext();
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "related_questions",
-    });
+    const [questions, setQuestions] = useState([]);
 
-    // 👈 تابع اصلی افزودن سؤال (با هدف لاگ گرفتن و افزودن به آرایه)
+    const handleSubmit = (data) => {
+        console.log("Form data submitted:", data);
+    };
+
     const handleAddQuestion = (questionType) => {
-        console.log(`✅ نوع سؤال انتخاب شده: ${questionType}`);
-        const newQuestion = getInitialQuestion(questionType);
-        
-        if (newQuestion) {
-            // 💡 اگر می‌خواهید فعلاً فقط لاگ بگیرید و آرایه تغییر نکند، خط زیر را کامنت کنید.
-            // اما برای دیدن نتیجه‌ی کار Menu و append، بهتر است آن را فعال بگذاریم:
-            append(newQuestion); 
+        const newQuestion = {
+            id: Date.now(),
+            type: questionType,
+            question_text: "",
+            ...(questionType === "multi_choice" && {
+                options: [
+                    { text: "", isCorrect: false },
+                    { text: "", isCorrect: false },
+                    { text: "", isCorrect: false },
+                    { text: "", isCorrect: false },
+                ],
+            }),
+            ...(questionType === "true_false" && { correct_answer: "" }),
+            ...(questionType === "short_answer" && { short_answer: "" }),
+            ...(questionType === "full_answer" && { full_answer: "" }),
+        };
+        setQuestions((prev) => [...prev, newQuestion]);
+    };
+
+    const handleRemoveQuestion = (index) => {
+        setQuestions((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const renderQuestionFields = (question, index) => {
+        switch (question.type) {
+            case "multi_choice":
+                return <MultipleChoiceFields questionIndex={index} />;
+            case "true_false":
+                return (
+                    <div
+                        // 👈 تغییر: اضافه کردن 'gap-6' برای فاصله بین ستون‌ها و 'items-end' برای هم‌ترازی
+                        className="grid grid-cols-12 gap-6 items-center">
+                        {/* ستون اول: فیلد متن سوال */}
+                        <div className="col-span-9">
+                            <CustomeInputField
+                                key={`tf-text-${question.id}`}
+                                name={`question_data.questions[${index}].question_text`}
+                                label="Enter the True/False statement here"
+                            />
+                        </div>
+
+                        {/* ستون دوم: رادیو باتن پاسخ صحیح */}
+                        <div className="col-span-3">
+                            <CustomRadioGroup
+                                key={`radio-${question.id}`}
+                                name={`question_data.questions[${index}].correct_answer`}
+                                label="Correct Answer"
+                                // row={true} را در اینجا حفظ می‌کنیم چون گزینه‌های True/False باید افقی باشند.
+                                row={true}
+                                rules={{
+                                    required:
+                                        "لطفاً پاسخ صحیح (صحیح/غلط) را مشخص کنید.",
+                                }}
+                                options={[
+                                    { value: "True", label: "True" },
+                                    { value: "False", label: "False" },
+                                ]}
+                            />
+                        </div>
+                    </div>
+                );
+            case "short_answer":
+                return (
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                        }}>
+                        <CustomeInputField
+                            label="question text"
+                            name={`question_data.questions[${index}].question_text`}
+                        />
+                        <CustomeInputField
+                            label="Short Answer"
+                            name={`question_data.questions[${index}].short_answer`}
+                            rules={{ required: true }}
+                            multiline
+                            minRows={2}
+                        />
+                    </Box>
+                );
+
+            default:
+                return null;
         }
     };
 
     return (
-        <FormTamplate defaultValues={{related_questions: []}}>
-            <QuestionStemField />
-            <div className="mt-4">
-                <CustomeInputField
-                    multiline
-                    minRows={3} 
-                    maxRows={15} 
-                    name={"reading_passage"}
-                    label={"Reading Text"}
-                    rules={{ required: true }}
-                />
-            </div>
+        <FormTamplate onSubmit={handleSubmit}>
+            <Box
+                sx={{
+                    maxWidth: "900px",
+                    margin: "0 auto",
+                    display: "flex",
+                    flexDirection: "column",
+                }}>
+                {/* Stem */}
+                <QuestionStemField />
 
-            {/* -------------------------------------------------------- */}
-            {/* ۲. رندر پویا (Dynamic Rendering) سؤالات */}
-            {/* -------------------------------------------------------- */}
-            <div className="mt-4">
-                {/* 👈 حذف MultipleChoiceFields ثابت و جایگزینی با حلقه پویا */}
-                {fields.map((field, index) => (
-                    <div key={field.id} className="my-4 p-4 border rounded shadow-sm">
-                        
-                        {/* 👈 فاز ۱: فقط نمایش نوع سؤال (لاگ بصری) */}
-                        <p className="font-bold text-gray-700">
-                            **سوال شماره {index + 1}:** نوع {field.type} - (نام فیلد: related_questions.{index})
-                        </p>
-                        
-                        {/* ⚠️ در اینجا کامپوننت‌های شرطی (مثلاً MultiChoiceForm) رندر خواهند شد. */}
+                {/* Reading Passage */}
+                <Box sx={{ mt: 4 }}>
+                    <Typography
+                        variant="h6"
+                        sx={{ color: "#93c5fd", fontWeight: 600, mb: 1 }}>
+                        📖 Reading Passage
+                    </Typography>
+                    <CustomeInputField
+                        multiline
+                        minRows={5}
+                        maxRows={15}
+                        name={"question_data.reading_passage"}
+                        label={"Reading Text"}
+                        rules={{ required: true }}
+                    />
+                </Box>
 
-                        <Button 
-                            onClick={() => remove(index)} 
-                            color="error" 
-                            size="small" 
-                            sx={{mt: 1, textTransform: 'none'}}
-                        >
-                            حذف سوال
-                        </Button>
-                    </div>
-                ))}
-            </div>
+                {/* Questions Section */}
+                <Box sx={{ mt: 6 }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 3,
+                        }}>
+                        {questions.map((question, index) => (
+                            <QuestionCard
+                                key={question.id}
+                                question={question}
+                                index={index}
+                                onRemove={handleRemoveQuestion}>
+                                {renderQuestionFields(question, index)}
+                            </QuestionCard>
+                        ))}
 
+                        {questions.length === 0 && (
+                            <Typography
+                                variant="body1"
+                                sx={{ color: "rgba(255,255,255,0.6)" }}>
+                                🎯 No questions added yet. Click "Add Question"
+                                to get started.
+                            </Typography>
+                        )}
+                    </Box>
 
-            {/* -------------------------------------------------------- */}
-            {/* ۳. اتصال منو به تابع افزودن */}
-            {/* -------------------------------------------------------- */}
-            <ReadingQuestionsMenu onQuestionSelect={handleAddQuestion} /> 
+                    <Divider
+                        sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 2 }}
+                    />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 1,
+                        }}>
+                        <Typography
+                            variant="h5"
+                            sx={{ color: "white", fontWeight: 600 }}>
+                            📝 Questions ({questions.length})
+                        </Typography>
+                        <ReadingQuestionsMenu
+                            onQuestionSelect={handleAddQuestion}
+                        />
+                    </Box>
+                </Box>
 
-            <QuestionBasicInfo />
+                {/* Basic Info */}
+                <Box sx={{ mt: 2 }}>
+                    <QuestionBasicInfo />
+                </Box>
+            </Box>
         </FormTamplate>
     );
 }

@@ -1,8 +1,11 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
-import { Button } from "@mui/material";
+import { Button, Box, Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import ShortTextIcon from "@mui/icons-material/ShortText";
 
 export default function ReadingQuestionsMenu({ onQuestionSelect }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -21,6 +24,27 @@ export default function ReadingQuestionsMenu({ onQuestionSelect }) {
         // 2. بستن منو
         handleClose();
     };
+
+    const menuItems = [
+        {
+            type: "multi_choice",
+            label: "Multiple Choice",
+            icon: <FormatListBulletedIcon fontSize="small" />,
+            color: "#1976d2",
+        },
+        {
+            type: "true_false",
+            label: "True / False",
+            icon: <CheckBoxIcon fontSize="small" />,
+            color: "#2e7d32",
+        },
+        {
+            type: "short_answer",
+            label: "Short Answer",
+            icon: <ShortTextIcon fontSize="small" />,
+            color: "#ed6c02",
+        },
+    ];
     return (
         <>
             <Button
@@ -41,22 +65,34 @@ export default function ReadingQuestionsMenu({ onQuestionSelect }) {
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
-                // MenuListProps={{
-                //     "aria-labelledby": "basic-button",
-                // }}
-            >
-                <MenuItem onClick={() => handleItemClick("multi_choice")}>
-                    multiple-choice
-                </MenuItem>
-                <MenuItem onClick={() => handleItemClick("true_false")}>
-                    true/false
-                </MenuItem>
-                <MenuItem onClick={() => handleItemClick("short_answer")}>
-                    short answer
-                </MenuItem>
-                <MenuItem onClick={() => handleItemClick("full_answer")}>
-                    full answer
-                </MenuItem>
+                PaperProps={{
+                    sx: {
+                        mt: 1,
+                        borderRadius: 2,
+                        minWidth: 200,
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                    },
+                }}>
+                {menuItems.map((item) => (
+                    <MenuItem
+                        key={item.type}
+                        onClick={() => handleItemClick(item.type)}
+                        sx={{
+                            py: 1.5,
+                            "&:hover": {
+                                backgroundColor: `${item.color}10`,
+                            },
+                        }}>
+                        <Box className="flex items-center space-x-2">
+                            <Box sx={{ color: item.color }}>{item.icon}</Box>
+                            <Typography
+                                variant="body2"
+                                sx={{ fontWeight: 500 }}>
+                                {item.label}
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+                ))}
             </Menu>
         </>
     );
