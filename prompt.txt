@@ -1,0 +1,85 @@
+
+## 🧩 MASTER PROMPT — *“Re-Comment My Code Professionally”*
+
+> **Prompt:**
+> Re-comment the following code file using the style and structure defined below.
+> ⚠️ **Do not change any code. Only comments.**
+
+---
+
+### 🎯 OBJECTIVE
+
+The goal is to make the code:
+
+1. **Readable** — even for future collaborators or my future self.
+2. **Educational** — each section should teach *why* the code exists, not just what it does.
+3. **Professional** — use concise, industry-standard explanations and highlight best practices.
+4. **Scalable** — include notes about maintainability, modularity, and future improvements.
+
+---
+
+### 🧱 COMMENT STRUCTURE
+
+Each file should include:
+
+1. **Section headers** — visually separated by:
+
+   ```js
+   // ================================================================================
+   // 🧩 SECTION TITLE
+   // -------------------------------------------------------------------------------
+   // 🧠 Concept:   (Explain the purpose of this section)
+   // 💡 Tip:       (One concise best-practice or conceptual insight)
+   // ================================================================================
+   ```
+
+   * Add relevant emojis to improve scanning and readability (e.g., ⚙️, 🚀, 🧠, 🧾, 🌐, 🧰).
+   * Each major logical part of the file (config, imports, middleware, routes, exports, etc.) gets one section.
+
+2. **Inline comments** — short, to the point, and educational:
+
+   * Focus on *why* or *how*, not on trivial “what” descriptions.
+   * Example:
+
+     ```js
+     // Converts incoming JSON into JS objects — essential for POST/PUT requests.
+     app.use(express.json());
+     ```
+
+3. **Professional tone**:
+
+   * Neutral, formal, and instructive.
+   * Use developer lingo naturally (e.g., middleware pipeline, scalability, modular routing, async workflow).
+   * Avoid fluff; favor clarity and reasoning.
+
+---
+
+### 🧠 DEVELOPER INSIGHT (At the Bottom)
+
+At the very end of every file, add:
+
+```js
+// ================================================================================
+// 🧠 DEVELOPER INSIGHT
+// -------------------------------------------------------------------------------
+// ✅ STRENGTHS:
+// - Summarize what is done well (structure, logic, separation of concerns).
+//
+// ⚠️ IMPROVEMENT AREAS:
+// - Highlight realistic refactor opportunities or design upgrades.
+//
+// 🚀 NEXT FEATURE IDEAS:
+// - Suggest next steps, scalability ideas, or integrations that would make
+//   the system more powerful or maintainable.
+// ================================================================================
+```
+
+---
+
+### ✳️ STYLE NOTES
+
+* Use consistent indentation and spacing, but **do not modify any executable code**.
+* Prefer conceptual comments over line-by-line repetition.
+* Keep emoji use subtle and purposeful — not decorative.
+* Maintain the tone of a **senior developer mentoring a junior developer** through code review.
+

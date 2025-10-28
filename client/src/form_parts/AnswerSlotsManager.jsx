@@ -1,93 +1,114 @@
-// AnswerSlotsManager.jsx
+// /client/src/form_parts/AnswerSlotsManager.jsx
 
-import { Button, IconButton, Box, Typography } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { useFormContext, useFieldArray } from "react-hook-form";
-import CustomeInputField from "./CustomeInputField"; // فرض بر در دسترس بودن
+// --------------------------------------------------------------------------------
+// 🧩 IMPORTS
+// --------------------------------------------------------------------------------
+import { Button, Box, Typography } from "@mui/material"; // MUI components
+import AddIcon from "@mui/icons-material/Add";           // Icon for add button
+import RemoveIcon from "@mui/icons-material/Remove";     // Icon for remove button
+import { useFormContext, useFieldArray } from "react-hook-form"; // RHF hooks
+import CustomeInputField from "./CustomeInputField";    // Custom input component
 import { useEffect } from "react";
 
-// این کامپوننت فیلدهای اسلات پاسخ را به صورت پویا مدیریت می‌کند.
+// --------------------------------------------------------------------------------
+// 🧠 COMPONENT: AnswerSlotsManager
+// --------------------------------------------------------------------------------
+// Purpose: Dynamically manage "answer slots" for questions
+// Features:
+// - Automatically append default slot if none exists
+// - Add / remove slots with buttons
+// - Integrates seamlessly with RHF FormContext
 export default function AnswerSlotsManager({
-    name = "question_data.answer_slots",
+    name = "question_data.answer_slots", // default path in RHF form state
 }) {
-    const {
-        control,
-    } = useFormContext();
 
-    // 💡 استفاده از useFieldArray
+    // -----------------------------------------------------------
+    // 🔹 RHF CONTEXT & FIELD ARRAY
+    // -----------------------------------------------------------
+    const { control } = useFormContext(); // Provides form state & methods
+
+    // 💡 useFieldArray allows dynamic array of fields in RHF
     const { fields, append, remove } = useFieldArray({
         control,
         name: name,
     });
 
-    const defaultSlot = { correct_word: "" };
+    const defaultSlot = { correct_word: "" }; // default structure for new slot
 
-    // === تغییر ۱ و ۳: هندل کردن فیلد پیش‌فرض و جلوگیری از رندر بی‌پایان ===
+    // -----------------------------------------------------------
+    // 🔹 INITIALIZATION EFFECT
+    // -----------------------------------------------------------
     useEffect(() => {
-        // اگر آرایه خالی است (یعنی نه در defaultValues و نه در useFormContext فیلدی وجود ندارد)
+        // If no slots exist initially, append a default one
         if (fields.length === 0) {
             append(defaultSlot);
         }
-        // [fields.length] در اینجا تنها یک بار در mount کامپوننت
-        // یا هر زمان که طول آرایه به صفر برسد، اجرا می‌شود.
+        // ✅ Effect runs only on mount or when fields.length === 0
     }, [fields.length, append, defaultSlot]);
 
-
-    // === توابع دکمه‌ها ===
+    // -----------------------------------------------------------
+    // 🔹 BUTTON HANDLERS
+    // -----------------------------------------------------------
     const handleRemoveLast = () => {
-        // حذف آخرین فیلد
+        // Remove last field, but don't allow removing if only 1 exists
         if (fields.length > 0) {
             remove(fields.length - 1);
         }
     };
 
+    // -----------------------------------------------------------
+    // 🔹 JSX RETURN
+    // -----------------------------------------------------------
     return (
-        <Box sx={{ p: 2, border: "1px dashed #ccc", borderRadius: 2, my: 2}}>
-            {/* === تغییر ۲: موقعیت دکمه‌ها در کنار تیتر === */}
+        <Box
+            sx={{
+                p: 2,
+                border: "1px dashed #ccc",
+                borderRadius: 2,
+                my: 2
+            }}
+        >
+            {/* === HEADER + BUTTONS === */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
                 <Typography variant="h6" sx={{ mb: { xs: 1, sm: 0 } }}>
                     Define Correct Answers (Slots)
                 </Typography>
+
                 <div className="flex gap-2">
-                    {/* دکمه افزودن */}
+                    {/* Add Slot Button */}
                     <Button
                         type="button"
-                        onClick={() => append(defaultSlot)}
+                        onClick={() => append(defaultSlot)} // Adds a new slot to the array
                         startIcon={<AddIcon />}
                         variant="outlined"
                         size="small"
                     >
                         Add Slot
                     </Button>
-                    {/* دکمه حذف آخرین فیلد */}
+
+                    {/* Remove Last Slot Button */}
                     <Button
                         type="button"
-                        onClick={handleRemoveLast}
+                        onClick={handleRemoveLast}         // Removes last slot
                         startIcon={<RemoveIcon />}
                         variant="outlined"
                         color="error"
                         size="small"
-                        // حداقل یک اسلات باید وجود داشته باشد (طبق تغییر ۳)
-                        disabled={fields.length <= 1} 
+                        disabled={fields.length <= 1}      // Prevent removing the last remaining slot
                     >
                         Remove Last
                     </Button>
                 </div>
             </div>
 
-            {/* === تغییر ۳: استفاده از Tailwind Grid برای ۵ فیلد در هر ردیف === */}
+            {/* === DYNAMIC GRID OF INPUT FIELDS === */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {fields.map((field, index) => (
-                    // نیازی به Box اضافی با flex نیست، Grid خودش چیدمان را مدیریت می‌کند
                     <div key={field.id} className="w-full">
                         <CustomeInputField
-                            label={`Slot ${index + 1}`}
-                            // 💡 مسیر دهی دقیق به فیلد
-                            name={`${name}.${index}.correct_word`}
-                            rules={{
-                                required: true,
-                            }}
+                            label={`Slot ${index + 1}`} // Label shows 1-based index
+                            name={`${name}.${index}.correct_word`} // precise RHF path
+                            rules={{ required: true }}   // Validation: field required
                         />
                     </div>
                 ))}
@@ -95,3 +116,13 @@ export default function AnswerSlotsManager({
         </Box>
     );
 }
+
+// --------------------------------------------------------------------------------
+// 🧭 Developer Insight
+// --------------------------------------------------------------------------------
+// 🔹 This component demonstrates dynamic form arrays with RHF + MUI
+// 🔹 useFieldArray manages a list of fields efficiently with keys (field.id)
+// 🔹 Initial default slot prevents empty form submission
+// 🔹 Grid + Tailwind ensures responsive layout up to 5 columns
+// 🔹 Add / Remove logic ensures at least one slot always exists
+// 🔹 Can be extended for multi-word answers or complex validation rules

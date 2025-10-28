@@ -1,5 +1,10 @@
-// CustomRadioGroup.jsx
-import { useController } from "react-hook-form"; // 👈 هوک کلیدی برای اتصال
+// /client/src/components/form_parts/CustomRadioGroup.jsx
+
+// --------------------------------------------------------------------------------
+// 🧩 IMPORTS
+// --------------------------------------------------------------------------------
+
+import { useController } from "react-hook-form"; // Connects external inputs to RHF
 import {
     FormControl,
     FormLabel,
@@ -8,17 +13,42 @@ import {
     Radio,
     Typography,
     FormHelperText,
-    Box, // برای استایل‌دهی Tailwind
+    Box,
 } from "@mui/material";
 
+
+// --------------------------------------------------------------------------------
+// 🧠 COMPONENT: CustomRadioGroup
+// --------------------------------------------------------------------------------
+// A reusable Radio Group component integrated with React Hook Form.
+// Handles connection, validation, error display, and custom styling (e.g., dark mode).
+// --------------------------------------------------------------------------------
+
 /**
- * کامپوننت کاستوم Radio Group متصل به React Hook Form.
- * این کامپوننت مسئول مدیریت اتصال (Connection)، اعتبار سنجی (Validation) و نمایش خطا (Error Display) است.
- * * @param {string} name - نام فیلد در فرم (مثلاً 'questions[0].correct_answer')
- * @param {string} label - عنوان گروه رادیویی
- * @param {object} rules - قوانین اعتبارسنجی RHF
- * @param {Array<{value: string, label: string}>} options - آرایه‌ای از گزینه‌ها
- * @param {boolean} row - آیا گزینه‌ها به‌صورت افقی نمایش داده شوند
+ * @component
+ *
+ * @param {Object} props
+ * @param {string} props.name - Field name in the form (e.g., 'questions[0].correct_answer').
+ * @param {string} props.label - Group label displayed above the radio buttons.
+ * @param {Object} [props.rules] - Validation rules for RHF (e.g., { required: "Required field" }).
+ * @param {Array<{ value: string, label: string }>} [props.options=[]] - Array of radio button options.
+ * @param {boolean} [props.row=true] - If true, display options horizontally; otherwise vertically.
+ * @param {...any} [props] - Any other props are passed to the underlying MUI RadioGroup.
+ *
+ * @returns {JSX.Element} Rendered RadioGroup connected to RHF.
+ *
+ * @example
+ * <FormProvider {...methods}>
+ *   <CustomRadioGroup
+ *       name="correct_answer"
+ *       label="Select the correct answer"
+ *       options={[
+ *           { value: "A", label: "Option A" },
+ *           { value: "B", label: "Option B" }
+ *       ]}
+ *       rules={{ required: "Please select an option" }}
+ *   />
+ * </FormProvider>
  */
 export default function CustomRadioGroup({
     name,
@@ -28,15 +58,11 @@ export default function CustomRadioGroup({
     row = true,
     ...props
 }) {
-    // ۱. استفاده از useController برای اتصال به RHF
+    // 🎛 Connect to RHF using useController
     const {
-        field, // شامل: name, value, onChange, onBlur
-        fieldState, // شامل: error, invalid
-    } = useController({
-        name,
-        rules,
-        // control به طور خودکار از FormProvider گرفته می‌شود.
-    });
+        field,       // { name, value, onChange, onBlur }
+        fieldState,  // { error, invalid }
+    } = useController({ name, rules });
 
     const isError = !!fieldState.error;
     const errorText = fieldState.error?.message;
@@ -48,9 +74,9 @@ export default function CustomRadioGroup({
             fullWidth
             error={isError}
             margin="normal"
-            className="p-3 rounded-lg bg-gray-800 border border-gray-700" // استایل Dark Mode
+            className="p-3 rounded-lg bg-gray-800 border border-gray-700" // Dark mode styling
         >
-            {/* ۲. برچسب گروه رادیویی */}
+            {/* Group label */}
             <FormLabel
                 component="legend"
                 sx={{
@@ -61,21 +87,21 @@ export default function CustomRadioGroup({
                 {label}
             </FormLabel>
 
-            {/* ۳. RadioGroup که field را می‌پذیرد */}
+            {/* Radio buttons */}
             <RadioGroup
-                {...field} // اعمال field.value, field.onChange, field.onBlur
-                value={controlledValue}
-                onChange={field.onChange} // field.onChange و field.onBlur را مستقیماً پاس می‌دهیم
-                onBlur={field.onBlur}
-                row={row}
-                {...props}>
+                {...field}                 // value, onChange, onBlur
+                value={controlledValue}     
+                onChange={field.onChange}   
+                onBlur={field.onBlur}       
+                row={row}                   
+                {...props}                 
+            >
                 {options.map((option) => (
                     <FormControlLabel
                         key={option.value}
                         value={option.value}
                         control={
                             <Radio
-                                // استایل رادیو باتن (آبی در حالت عادی، قرمز در حالت خطا)
                                 sx={{
                                     color: isError ? "#f87171" : "#60a5fa",
                                     "&.Mui-checked": {
@@ -85,8 +111,7 @@ export default function CustomRadioGroup({
                             />
                         }
                         label={
-                            <Typography
-                                sx={{ color: "#f9fafb", fontSize: "0.9rem" }}>
+                            <Typography sx={{ color: "#f9fafb", fontSize: "0.9rem" }}>
                                 {option.label}
                             </Typography>
                         }
@@ -94,7 +119,7 @@ export default function CustomRadioGroup({
                 ))}
             </RadioGroup>
 
-            {/* ۴. نمایش پیغام خطا */}
+            {/* Error message */}
             {isError && (
                 <FormHelperText sx={{ color: "#f87171", mt: 1 }}>
                     {errorText}
@@ -103,3 +128,14 @@ export default function CustomRadioGroup({
         </FormControl>
     );
 }
+
+
+// --------------------------------------------------------------------------------
+// 🧭 Developer Insight
+// --------------------------------------------------------------------------------
+// 🔹 useController is preferred over Controller here for cleaner and direct field access.
+// 🔹 Setting controlledValue ensures proper controlled component behavior.
+// 🔹 Dark mode styling and dynamic error coloring improves UX for complex forms.
+// 🔹 Flexible props spread (`...props`) allows future extensions like disabled, size, or custom ARIA labels.
+// 🔹 Validation handled through RHF ensures the component stays declarative and form-agnostic.
+// 🔹 Security: purely UI + form state — no direct risk. Still always sanitize user input on submission.

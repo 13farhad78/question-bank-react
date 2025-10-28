@@ -1,15 +1,27 @@
+
+// --------------------------------------------------------------------------------
+// 🧰 UTILITY: validateMultipleChoiceCorrectOption
+// --------------------------------------------------------------------------------
 /**
- * بررسی می‌کند که آیا حداقل یک گزینه در آرایه، به عنوان پاسخ صحیح علامت‌گذاری شده است (isCorrect: true).
+ * Checks if at least one option in a multiple-choice question is marked as correct.
  *
- * @param {Array<Object>} options - آرایه‌ای از اشیاء گزینه. هر شیء باید شامل یک فیلد `isCorrect` باشد.
- * @returns {boolean} - اگر حداقل یک گزینه صحیح باشد، `true` و در غیر این صورت `false`.
+ * 🔹 Step-by-step:
+ * 1. Check if the input array exists and is non-empty.
+ * 2. Use `.some()` to see if any option has `isCorrect: true`.
+ * 3. Return true if at least one correct option exists; otherwise, false.
+ *
+ * ⚠️ Weaknesses / Limitations:
+ * - Does not validate structure of each option object (could throw if `isCorrect` is missing).
+ * - Assumes `isCorrect` is strictly boolean; truthy/falsy values may behave unexpectedly.
+ *
+ * 💡 Recommendations:
+ * - Consider adding runtime checks for object structure.
+ * - Could be extended to accept custom keys or support multiple correct answers validation rules.
  */
 export const validateMultipleChoiceCorrectOption = (options) => {
-    // اگر آرایه موجود نبود یا خالی بود، اعتبارسنجی ناموفق است.
     if (!options || options.length === 0) {
         return false;
     }
     
-    // از متد .some() برای بررسی وجود حداقل یک عنصر با isCorrect: true استفاده می‌کنیم.
     return options.some((option) => option.isCorrect === true);
-};
+}

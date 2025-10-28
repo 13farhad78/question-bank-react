@@ -1,53 +1,72 @@
-// CustomAutoComplete.jsx
+// /client/src/components/form_parts/CustomAutoComplete.jsx
+
+// --------------------------------------------------------------------------------
+// 🧩 IMPORTS
+// --------------------------------------------------------------------------------
 
 import { Autocomplete, Box, TextField } from "@mui/material";
-import { Controller } from "react-hook-form";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
-// 💡 اضافه شدن پراپرتی 'label'
+
+// --------------------------------------------------------------------------------
+// 🧠 COMPONENT: CustomAutoComplete
+// --------------------------------------------------------------------------------
+// A reusable autocomplete dropdown integrated with React Hook Form.
+// Supports dynamic options, labels, and error handling.
+// --------------------------------------------------------------------------------
+
 export default function CustomAutoComplete({ name, options = [], label, ...props }) {
-    const { control } = useFormContext();
+    const { control } = useFormContext(); // 🎛 Access form context from FormProvider
 
-    // تعیین لیبل نمایش داده شده
+    // Label to display on the input; falls back to field name if no label provided
     const displayLabel = label || name; 
 
     return (
         <Box sx={{ width: "100%" }}>
             <Controller
-                name={name}
-                control={control}
-                defaultValue={null}
-                rules={{ required: true }}
+                name={name}              // Field name for RHF registration
+                control={control}        // RHF controller instance
+                defaultValue={null}      // Initial value
+                rules={{ required: true }} // Basic validation
                 render={({ field, fieldState }) => (
                     <Autocomplete
-                        {...field}
-                        {...props}
+                        {...field}       // Connect Autocomplete to RHF state
+                        {...props}       // Allow extra props (flexibility)
                         options={options}
-                        getOptionLabel={(option) => option?.label || ""}
+                        getOptionLabel={(option) => option?.label || ""} // Display text
                         isOptionEqualToValue={(option, value) =>
                             option?.value === value?.value
                         }
-                        // اتصال RHF: Autocomplete نیاز به تنظیم value در field دارد
-                        // و در onChange مقدار جدید را به field.onChange پاس می‌دهد
-                        onChange={(event, value) => field.onChange(value )} 
+                        // Sync RHF state on selection change
+                        onChange={(event, value) => field.onChange(value)} 
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                // 💡 استفاده از 'displayLabel' به جای 'name'
-                                label={displayLabel} 
-                                error={!!fieldState.error}
-                                helperText={fieldState.error?.message || ""}
+                                label={displayLabel} // Shows label in input
+                                error={!!fieldState.error} // Highlight error
+                                helperText={fieldState.error?.message || ""} // Show message
                                 fullWidth
                                 autoComplete="off"
                             />
                         )}
                         slotProps={{
-                            paper: { style: { fontFamily: "Vazir" } },
+                            paper: { style: { fontFamily: "Vazir" } }, // Custom font
                         }}
-                        noOptionsText="No Option"
+                        noOptionsText="No Option" // Text when no results
                     />
                 )}
             />
         </Box>
     );
 }
+
+
+// --------------------------------------------------------------------------------
+// 🧭 Developer Insight
+// --------------------------------------------------------------------------------
+// 🔹 Controller is necessary because MUI Autocomplete is not a native input.
+// 🔹 Default value must be explicitly set (here null) to avoid uncontrolled → controlled warnings.
+// 🔹 Error handling is integrated via fieldState, allowing inline feedback.
+// 🔹 Security: this component handles only UI state; no direct risk of injection.
+// 🔹 Future scalability: could add async loading options, multi-select mode, or custom renderOption templates.
+// 🔹 Flexibility: spread of {...props} allows parent components to modify Autocomplete behavior easily.
