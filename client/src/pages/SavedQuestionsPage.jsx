@@ -1,105 +1,107 @@
-// /client/src/pages/SavedQuestionsPage.js
+import React, { useState, useEffect } from "react";
+import QuestionCardWrapper from "../components/QuestionCardWrapper";
 
-import React, { useState, useEffect } from 'react';
-import { Typography, List, ListItem, ListItemText, CircularProgress, Box, Alert } from '@mui/material';
+// وارد کردن کامپوننت‌های هر نوع سؤال
+import MultipleChoiceCard from "../components/question_types/MultipleChoiceCard";
+import TrueFalseCard from "../components/question_types/TrueFalseCard.jsx";
+import ShortAnswerCard from "../components/question_types/ShortAnswerCard";
+import FillInTheBlankCard from "../components/question_types/FillInTheBlankCard";
+import ReadingCard from "../components/question_types/ReadingCard";
+
+import { Typography, CircularProgress, Box, Alert, Container } from "@mui/material";
+import { sampleQuestions } from "../mock-questions/questions.jsx"; // ← این فایل تستی توی پروژه‌ت هست
 
 const SavedQuestionsPage = () => {
-    // 1. State برای ذخیره لیست سؤالات
-    const [questions, setQuestions] = useState([]);
-    // 2. State برای مدیریت وضعیت بارگذاری (Loading)
-    const [loading, setLoading] = useState(true);
-    // 3. State برای مدیریت خطاها
-    const [error, setError] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    // 4. تابع اصلی برای فراخوانی API
-    useEffect(() => {
-        const fetchQuestions = async () => {
-            try {
-                // 💡 فراخوانی روت GET جدید شما
-                const response = await fetch('http://localhost:5000/api/questions'); 
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch questions from server.');
-                }
+  // در این نسخه از داده‌ی تستی استفاده می‌کنیم
+  useEffect(() => {
+    try {
+      setQuestions(sampleQuestions);
+    } catch (err) {
+      console.error("Error loading sample questions:", err);
+      setError("خطا در بارگذاری داده‌ها");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-                const data = await response.json();
-                setQuestions(data); // ذخیره داده‌ها در State
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+        <CircularProgress />
+        <Typography variant="h6" sx={{ ml: 2 }}>
+          در حال بارگذاری سوالات...
+        </Typography>
+      </Box>
+    );
 
-            } catch (err) {
-                console.error("Fetch Error:", err);
-                setError("خطا در بازیابی اطلاعات: مطمئن شوید سرور Backend فعال است.");
-            } finally {
-                setLoading(false); // پایان بارگذاری
-            }
+  if (error)
+    return (
+      <Box sx={{ mt: 5 }}>
+        <Alert severity="error">{error}</Alert>
+      </Box>
+    );
+
+  if (questions.length === 0)
+    return (
+      <Box sx={{ mt: 5 }}>
+        <Alert severity="info">هنوز هیچ سؤالی ذخیره نشده است.</Alert>
+      </Box>
+    );
+
+  return (
+    <Container sx={{ py: 5 }}>
+      {questions.map((q, index) => {
+        const info = {
+          پایه: q.basic_info?.grade,
+          درس: q.basic_info?.lesson,
+          سختی: q.basic_info?.difficulty,
+          مهارت: q.language_skills?.focus,
+          سال: q.questionSource?.year,
         };
 
-        fetchQuestions();
-    }, []); // 💡 آرایه خالی به معنی اجرای فقط یک بار پس از mount شدن کامپوننت
-
-    // ----------------------------------------------------
-    // مدیریت حالت‌های نمایش (Rendering)
-    // ----------------------------------------------------
-
-    if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-                <CircularProgress />
-                <Typography variant="h6" sx={{ ml: 2 }}>در حال بارگذاری سوالات...</Typography>
-            </Box>
+          <QuestionCardWrapper
+            key={index}
+            type={q.question_type}
+            info={info}
+            onEdit={() => console.log("Edit", q._id)}
+            onDelete={() => console.log("Delete", q._id)}
+          >
+            {renderQuestionBody(q)}
+          </QuestionCardWrapper>
         );
-    }
-
-    if (error) {
-        return (
-            <Box sx={{ mt: 5 }}>
-                <Alert severity="error">{error}</Alert>
-            </Box>
-        );
-    }
-    
-    if (questions.length === 0) {
-        return (
-            <Box sx={{ mt: 5 }}>
-                <Alert severity="info">
-                    هنوز هیچ سؤالی در دیتابیس ذخیره نشده است. لطفاً ابتدا سؤالی ثبت کنید.
-                </Alert>
-            </Box>
-        );
-    }
-
-    // ----------------------------------------------------
-    // نمایش لیست سؤالات
-    // ----------------------------------------------------
-
-    return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-                📚 لیست سؤالات ذخیره شده ({questions.length})
-            </Typography>
-            <List>
-                {questions.map((q) => (
-                    <ListItem 
-                        key={q._id} 
-                        divider 
-                        sx={{ bgcolor: 'grey.100', mb: 1, borderRadius: 1 }}
-                    >
-                        <ListItemText
-                            primary={
-                                // نمایش متن اصلی سؤال یا بخشی از آن
-                                <Typography variant="body1" fontWeight="bold">
-                                    {q.question_data.question_text || 'متن سوال نامشخص'}
-                                </Typography>
-                            }
-                            secondary={
-                                // نمایش اطلاعات کلیدی
-                                `نوع: ${q.question_type} | پایه: ${q.basic_info.grade} | درس: ${q.basic_info.lesson}`
-                            }
-                        />
-                    </ListItem>
-                ))}
-            </List>
-        </Box>
-    );
+      })}
+    </Container>
+  );
 };
+
+// 👇 تابع کمکی برای رندر نوع‌های مختلف سؤال
+function renderQuestionBody(q) {
+  const { question_type, question_data } = q;
+
+  switch (question_type) {
+    case "multiple_choice":
+      return <MultipleChoiceCard question={question_data} />;
+
+    case "fill_in_the_blank":
+      return <FillInTheBlankCard question={question_data} />;
+
+    case "reading":
+      return <ReadingCard question={question_data} />;
+
+    case "true_false":
+      return <TrueFalseCard question={question_data} />;
+
+    case "short_answer":
+      return <ShortAnswerCard question={question_data} />;
+
+    default:
+      return <p className="text-gray-400">❓ نوع سؤال ناشناخته است.</p>;
+  }
+}
 
 export default SavedQuestionsPage;

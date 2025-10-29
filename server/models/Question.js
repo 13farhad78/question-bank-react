@@ -23,6 +23,16 @@ const QuestionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Mixed, 
         required: true 
     },
+
+    questionSource : {
+      type: mongoose.Schema.Types.Mixed,
+      required: true
+    },
+
+    score_value: {
+      type : Number,
+      required: true
+    },
     
     // Optional field to mark a question as active/inactive (for future filtering)
     is_active: { 

@@ -102,6 +102,7 @@ export default function ReadingForm() {
     // Validates each question and stops submission if invalid
     // --------------------------------------------------------------------------------
     const handleSubmit = (data) => {
+        data.question_type = "reading";
         const questionsData = data.question_data?.questions || [];
 
         for (let i = 0; i < questionsData.length; i++) {
